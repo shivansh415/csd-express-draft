@@ -17,9 +17,9 @@ export default function TruckScene({ tone = 'paper', enter = 'scroll', children 
         <div className="ts-copy">{children}</div>
         <div className="ts-stage">
           <div className="ts-truck">
-            <Image src="/trucks/truck-side.png" alt="CSD Express truck, side view" width={1282} height={503} priority sizes="(max-width: 1200px) 92vw, 1100px" />
+            <Image src="/trucks/truck-side.png" alt="CSD Supply Chain truck, side view" width={1282} height={503} priority sizes="(max-width: 1200px) 92vw, 1100px" />
             <LogoMark className="ts-logo" />
-            <span className="ts-tag">Millions of Miles &ndash; Millions of Smiles</span>
+            <span className="ts-tag">Moving Business &ndash; Delivering Trust</span>
             <i className="ts-shadow" />
           </div>
           <div className="ts-road"><i /></div>

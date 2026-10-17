@@ -28,7 +28,7 @@ export default function Services() {
           </div>
           <figure className="sv-visual" data-reveal>
             <span className="dx-pill">Scanned in, scanned out</span>
-            <Image src="/trucks/truck-loaded.png" alt="CSD Express truck with rear doors open, loaded with cartons" width={1175} height={627} sizes="(max-width: 900px) 80vw, 45vw" data-parallax="5" />
+            <Image src="/trucks/truck-loaded.png" alt="CSD Supply Chain truck with rear doors open, loaded with cartons" width={1175} height={627} sizes="(max-width: 900px) 80vw, 45vw" data-parallax="5" />
             <small>Every option is booked against a schedule, manifested and tracked to the dock.</small>
           </figure>
         </div>

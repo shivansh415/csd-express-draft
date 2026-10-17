@@ -6,18 +6,17 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
-import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { CustomEase } from 'gsap/CustomEase';
 import Lenis from 'lenis';
 
 /* All motion for the site. Markup lives in server components; this attaches to it via data attributes and ids:
    data-split (line reveal), data-reveal (fade up), data-parallax, data-float, data-count, data-truck-scene,
-   plus #preloader, #nav, #marqueeTrack, #map, #procPin, #commitText when they are on the page. */
+   plus #preloader, #nav, #marqueeTrack, .ht, #procPin, #commitText when they are on the page. */
 export default function SiteFX() {
   const path = usePathname();
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin, MotionPathPlugin, CustomEase);
+    gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin, CustomEase);
     CustomEase.create('osmo', '0.625,0.05,0,1');
     const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const TOUCH = matchMedia('(hover:none)').matches;
@@ -47,14 +46,6 @@ export default function SiteFX() {
     }, { signal });
 
     /* ---------- things that work with or without motion ---------- */
-    const map = $('#map');
-    $$('.co-lane').forEach((c) => {
-      c.addEventListener('mouseenter', () => {
-        map?.classList.toggle('dim-hyd', c.dataset.lane === 'vja');
-        map?.classList.toggle('dim-vja', c.dataset.lane === 'hyd');
-      }, { signal });
-      c.addEventListener('mouseleave', () => map?.classList.remove('dim-hyd', 'dim-vja'), { signal });
-    });
     $$('.copy').forEach((b) => b.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(b.dataset.copy ?? '');
@@ -97,6 +88,13 @@ export default function SiteFX() {
           .to(q('.ts-hint'), { autoAlpha: 0, duration: 0.05 }, t0)
           .to({}, { duration: 0.05 }, 0.95);
       });
+
+      /* hero: the truck drives in, then the tracker wipes onto the container */
+      if ($('.ht')) {
+        gsap.from('.ht-truck', { x: () => -window.innerWidth, duration: 1.8, ease: 'power3.out', delay: 0.1 });
+        gsap.from('.ht .ts-road i', { backgroundPositionX: 900, duration: 1.8, ease: 'power3.out', delay: 0.1 });
+        gsap.fromTo('.ct-in', { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.9, ease: 'power2.inOut', delay: 1.45, clearProps: 'clipPath' });
+      }
 
       /* process: horizontal scroll with the truck riding the rail; each step switches on as the truck reaches it */
       const procTrack = $('#procTrack');
@@ -182,22 +180,6 @@ export default function SiteFX() {
         ScrollTrigger.create({ start: 0, end: 'max', onUpdate: (self) => { gsap.to(mq, { timeScale: gsap.utils.clamp(-4, 4, 1 + self.getVelocity() / 600), duration: 0.6, overwrite: true }); } });
       }
 
-      /* corridor map: routes draw and the trucks ride them */
-      if (map) {
-        /* trucks pull up just short of the destination so they never park on its label */
-        const ride = (route: string) => ({ path: route, align: route, alignOrigin: [0.5, 0.5] as [number, number], autoRotate: true, start: 0.09, end: 0.92 });
-        gsap.set('#truckHyd', { motionPath: { ...ride('#routeHyd'), end: 0.09 } });
-        gsap.set('#truckVja', { motionPath: { ...ride('#routeVja'), end: 0.09 } });
-        gsap.timeline({ scrollTrigger: { trigger: map, start: 'top 75%', end: 'bottom 45%', scrub: 1 } })
-          .from('#routeHyd', { drawSVG: '0%', ease: 'none', duration: 1 }, 0)
-          .from('#routeVja', { drawSVG: '0%', ease: 'none', duration: 1 }, 0)
-          .to('#truckHyd', { motionPath: ride('#routeHyd'), ease: 'none', duration: 1 }, 0)
-          .to('#truckVja', { motionPath: ride('#routeVja'), ease: 'none', duration: 1 }, 0);
-        /* headlights flicker gently so a parked truck still feels switched on */
-        gsap.to('.map-truck .beam', { opacity: 0.55, duration: 1.2, ease: 'sine.inOut', yoyo: true, repeat: -1, stagger: 0.4 });
-        gsap.from('#map .node:not(.origin), #map text', { autoAlpha: 0, scale: 0.6, transformOrigin: 'center', stagger: 0.04, duration: 0.6, ease: 'back.out(1.8)', scrollTrigger: { trigger: map, start: 'top 75%', once: true } });
-      }
-
       /* service glyphs redraw on hover */
       $$('.sv-row').forEach((row) => {
         const shapes = $$('.glyph *', row);
@@ -243,8 +225,6 @@ export default function SiteFX() {
         gsap.set('#commitText', { color: '#1C2158' });
         $$('.pr-step').forEach((el) => el.classList.add('on'));
         $('#pausePlay')?.classList.add('play');
-        gsap.set('#truckHyd', { motionPath: { path: '#routeHyd', align: '#routeHyd', alignOrigin: [0.5, 0.5], autoRotate: true, start: 0.92, end: 0.92 } });
-        gsap.set('#truckVja', { motionPath: { path: '#routeVja', align: '#routeVja', alignOrigin: [0.5, 0.5], autoRotate: true, start: 0.92, end: 0.92 } });
       });
     } else if (pre) {
       lenis?.stop();
