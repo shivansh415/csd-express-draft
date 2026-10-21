@@ -56,7 +56,8 @@ export default function NetworkMap() {
       onUpdate: (self) => { progress.target = self.progress; },
     });
 
-    (async () => {
+    /* nothing 3D is downloaded or built until the section is within about a screen and a half of the viewport */
+    const boot = async () => {
       /* heavy setup waits for an idle moment and yields between steps, so it never stalls scrolling */
       const idle = () => new Promise<void>((r) => ('requestIdleCallback' in window ? window.requestIdleCallback(() => r(), { timeout: 1500 }) : setTimeout(r, 300)));
       const yieldNow = () => new Promise<void>((r) => setTimeout(r, 0));
@@ -99,7 +100,7 @@ export default function NetworkMap() {
       };
       let imgs: HTMLImageElement[];
       try {
-        imgs = await Promise.all(['/map/height.png', '/map/forest.png', '/map/land.png'].map(loadImg));
+        imgs = await Promise.all(['/map/height.webp', '/map/forest.webp', '/map/land.webp'].map(loadImg));
       } catch {
         renderer.dispose(); setFailed(true); return;
       }
@@ -454,12 +455,13 @@ export default function NetworkMap() {
         el.style.opacity = String(v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1 ? alpha : 0);
       };
 
-      const clock = new THREE.Clock();
+      const timer = new THREE.Timer();
       let raf = 0, prevT = 0, frameMs = 16, lastDprChange = 0;
       const frame = () => {
         raf = requestAnimationFrame(frame);
         if (!visible) return;
-        const now = clock.getElapsedTime(), raw = now - prevT, dt = Math.min(0.05, raw); prevT = now;
+        timer.update();
+        const now = timer.getElapsed(), raw = now - prevT, dt = Math.min(0.05, raw); prevT = now;
         /* adaptive resolution: drop pixel ratio when frames run long, restore it when there is headroom */
         if (raw > 0 && raw < 0.2) {
           frameMs = frameMs * 0.9 + raw * 1000 * 0.1;
@@ -567,9 +569,19 @@ export default function NetworkMap() {
         disposables.forEach((d) => d.dispose());
         renderer.dispose();
       };
-    })();
+    };
+    /* boot once the section is within ~1.5 screens AND the visitor has started scrolling: the map sits well below
+       the fold, so nobody who stays on the hero pays for three.js, the textures or the scene build */
+    let booted = false, isNear = false;
+    const tryBoot = () => {
+      if (booted || !isNear || window.scrollY < 40) return;
+      booted = true; near.disconnect(); window.removeEventListener('scroll', tryBoot); boot();
+    };
+    const near = new IntersectionObserver(([e]) => { isNear = e.isIntersecting; tryBoot(); }, { rootMargin: '150% 0px' });
+    near.observe(pin);
+    window.addEventListener('scroll', tryBoot, { passive: true });
 
-    return () => { disposed = true; st?.kill(); cleanup(); };
+    return () => { disposed = true; near.disconnect(); window.removeEventListener('scroll', tryBoot); st?.kill(); cleanup(); };
   }, []);
 
   const selected = ROUTES.find((r) => r.key === sel) ?? null;

@@ -5,7 +5,7 @@
   --white:#FFFFFF;
   --ink:#1C2158;
   --ink-2:#4B4F70;
-  --ink-3:#8B8EA4;
+  --ink-3:#666A84; /* 4.7:1 on paper, 5.3:1 on white */
   --line:#D9D7CF;
   --line-2:#C7C5BC;
   --green:#179A47;
@@ -13,10 +13,10 @@
   --green-soft:#E1F2E7;
   --red:#D8322B;
   --dusk:#F3DDB8;
-  /* logo colours, sampled from the CSD Supply Chain logo */
-  --logo-ink:#153363;
-  --logo-g:#6FB33F;
-  --logo-r:#D9402B;
+  /* logo colours, sampled from the client's final logo */
+  --logo-ink:#032F5F;
+  --logo-g:#5AB30D;
+  --logo-r:#F12A1E;
 
   --fh:var(--font-heading),"Montserrat","Helvetica Neue",Arial,sans-serif;
   --fb:var(--font-body),"IBM Plex Sans",system-ui,sans-serif;
@@ -53,9 +53,10 @@ h1,h2,h3,p,figure{margin:0}
 .btn::after{content:"";position:absolute;inset:auto 0 0 0;height:0;background:var(--ink);transition:height .45s var(--ease);z-index:0}
 .btn:hover::after{height:100%}
 .btn:hover{color:var(--paper)}
-.btn.solid{background:var(--green);border-color:var(--green);color:#fff}
-.btn.solid::after{background:var(--green-ink)}
-.btn.solid:hover{color:#fff;border-color:var(--green-ink)}
+/* solid buttons use a deeper green so white text clears 4.5:1 (brand green is 3.6:1) */
+.btn.solid{background:#12803B;border-color:#12803B;color:#fff}
+.btn.solid::after{background:#0D6630}
+.btn.solid:hover{color:#fff;border-color:#0D6630}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,213,115,.6)}70%{box-shadow:0 0 0 7px rgba(46,213,115,0)}}
 @keyframes cue{to{transform:translateX(100%)}}
 .logo-fill .c,.logo-fill .d,.brand-logo .c,.brand-logo .d{fill:var(--logo-ink)}.logo-fill .s,.brand-logo .s{fill:var(--logo-g)}.logo-fill .r,.brand-logo .r{fill:var(--logo-r)}
@@ -96,7 +97,7 @@ h1,h2,h3,p,figure{margin:0}
 .dx-nav.hide{transform:translateY(-110%)}
 .dx-nav.dark::before{background:rgba(28,33,88,.72);border-bottom-color:rgba(255,255,255,.12)}
 .dx-brand{display:flex;align-items:center;gap:.7rem;font-family:var(--fh);font-weight:700;letter-spacing:-.01em}
-.dx-logo{width:108px;height:auto;display:block}
+.dx-logo{width:84px;height:auto;display:block}
 .dx-nav nav{display:flex;gap:2rem;font-size:.95rem;color:var(--ink-2)}
 .dx-nav nav a:hover{color:var(--ink)}
 .dx-nav .btn{height:44px}
@@ -111,41 +112,9 @@ h1,h2,h3,p,figure{margin:0}
 .dx-switch a:hover{color:#fff}
 .dx-switch a.on{background:#fff;color:var(--ink);font-weight:500}
 
-/* ---------- truck scene ---------- */
-.ts{position:relative;overflow:hidden}
-.ts-pin{height:100vh;height:100svh;min-height:560px;display:grid;grid-template-rows:1fr auto;align-items:end;position:relative;padding-top:110px;padding-bottom:clamp(3.5rem,8vh,6rem);overflow:hidden}
-.ts-copy{display:grid;gap:1.4rem;justify-items:center;text-align:center;padding-inline:var(--gutter);align-self:center}
-.ts-copy .dx-lede{margin-inline:auto}
-.ts-copy .dx-actions{justify-content:center}
-.ts-stage{position:relative;margin-top:clamp(1.5rem,4vh,3rem)}
-.ts-truck{position:relative;width:min(1040px,88vw,92vh);margin-inline:auto;will-change:transform;z-index:2}
-.ts-truck img{display:block;width:100%;height:auto;position:relative;z-index:1}
-/* logo sits on the white container panel: panel = x 3%–78.7%, y 5%–59.6% of the cut-out */
-.ts-logo{position:absolute;z-index:2;left:26.6%;top:12.5%;width:28.4%;height:auto;overflow:visible;mix-blend-mode:multiply;opacity:.94}
-.ts-logo path{stroke-width:12;stroke-linejoin:round;stroke-linecap:round}
-.ts-logo .c,.ts-logo .d{fill:var(--logo-ink);stroke:var(--logo-ink)}
-.ts-logo .s{fill:var(--logo-g);stroke:var(--logo-g)}
-.ts-logo .r{fill:var(--logo-r);stroke:var(--logo-r)}
-.ts-tag{position:absolute;z-index:2;left:3%;width:75.7%;top:47.5%;text-align:center;font-family:var(--fh);font-weight:600;font-size:clamp(.42rem,1.05vw,.78rem);letter-spacing:.14em;text-transform:uppercase;color:var(--ink);opacity:0;mix-blend-mode:multiply;white-space:nowrap}
-.ts-shadow{position:absolute;z-index:0;left:4%;right:2%;bottom:-1.5%;height:9%;border-radius:50%;background:radial-gradient(closest-side,rgba(20,24,60,.34),transparent);filter:blur(6px)}
+/* ---------- road under the hero truck ---------- */
 .ts-road{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--line-2);z-index:1}
 .ts-road i{position:absolute;left:0;right:0;top:14px;height:2px;background-image:linear-gradient(90deg,var(--line-2) 0 46px,transparent 46px 110px);background-size:110px 2px;opacity:.8}
-.ts-hint{position:absolute;left:50%;bottom:1.1rem;transform:translateX(-50%);font-family:var(--fm);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);display:flex;align-items:center;gap:.7rem;white-space:nowrap}
-.ts-hint i{width:36px;height:1px;background:var(--line-2);position:relative;overflow:hidden;display:block}
-.ts-hint i::after{content:"";position:absolute;inset:0;background:var(--green);transform:translateX(-100%);animation:cue 2.2s var(--ease) infinite}
-.ts-paper{background:var(--paper)}
-.ts-paper .ts-pin::before{content:"";position:absolute;left:50%;top:38%;width:min(900px,90vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,var(--dusk),transparent 70%);opacity:.6;pointer-events:none}
-.ts-paper .ts-copy{position:relative}
-.ts-white{background:var(--white)}
-.ts-ink{background:var(--ink);color:#fff}
-.ts-ink .dx-lede{color:#B9BCD3}.ts-ink .dx-eyebrow{color:#9FA3C2}.ts-ink .dx-eyebrow::before{box-shadow:0 0 0 4px rgba(23,154,71,.25)}
-.ts-ink .ts-road{background:rgba(255,255,255,.2)}
-.ts-ink .ts-road i{background-image:linear-gradient(90deg,rgba(255,255,255,.28) 0 46px,transparent 46px 110px)}
-.ts-ink .ts-shadow{background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent)}
-.ts-ink .ts-hint{color:#7C80A3}.ts-ink .ts-hint i{background:rgba(255,255,255,.2)}
-.ts-dusk{background:var(--paper);padding:0 clamp(10px,1.4vw,20px)}
-.ts-dusk .ts-pin{border-radius:28px;background:linear-gradient(180deg,#FBF3E4 0%,var(--dusk) 100%)}
-.ts-dusk .ts-road{background:rgba(28,33,88,.18)}
 
 /* ---------- shared: CTA band ---------- */
 .dx-cta{background:var(--ink);color:#fff;padding-block:clamp(4.5rem,9vw,8rem) clamp(6rem,10vw,9rem)}
@@ -179,7 +148,6 @@ h1,h2,h3,p,figure{margin:0}
 /* ---------- mini truck (cut-out + painted mark), used on rails ---------- */
 .mini-truck{position:relative;display:block;width:120px}
 .mini-truck img{display:block;width:100%;height:auto}
-.mini-truck .ts-logo{opacity:1}
 
 /* ---------- marquee ---------- */
 .marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:1.1rem 0;overflow:hidden;white-space:nowrap;background:var(--white)}
@@ -236,7 +204,7 @@ h1,h2,h3,p,figure{margin:0}
 /* ---------- commitment ---------- */
 .cm{background:var(--white);border-top:1px solid var(--line)}
 .cm .big{font-family:var(--fh);font-weight:700;font-size:clamp(1.6rem,3.6vw,3.2rem);letter-spacing:-.03em;line-height:1.15;max-width:22em;margin-top:2rem}
-.cm .big .w{color:var(--line-2)}
+.cm .big .w{color:var(--ink-3)} /* readable (4.7:1) even before the scroll scrub darkens it */
 .cm-pills{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2.6rem}
 .cm-pills span{border:1px solid var(--line-2);border-radius:999px;padding:.6rem 1.1rem;font-size:.95rem;color:var(--ink-2);background:var(--paper);transition:background .35s,color .35s,border-color .35s}
 .cm-pills span:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -261,9 +229,7 @@ h1,h2,h3,p,figure{margin:0}
 .ft-mark{margin-top:4rem;display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;font-size:.9rem}
 @media (max-width:760px){.ft-grid{grid-template-columns:1fr}}
 
-@media (prefers-reduced-motion:reduce){.ts-hint i::after{animation:none}}
 
-.ts-truck > .ts-logo path{fill-opacity:0}
 
 /* ---------- why us ---------- */
 .why{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:clamp(3.5rem,7vw,6rem);border-top:1px solid var(--line)}
@@ -284,11 +250,11 @@ h1,h2,h3,p,figure{margin:0}
 @media (max-width:560px){.why{grid-template-columns:1fr}.why-col{border-left:1px solid var(--line)}}
 
 /* ---------- process: steps switch on as the truck arrives ---------- */
-.pr-step{opacity:.42;transition:opacity .6s,background .4s,border-color .4s,transform .6s var(--ease)}
+.pr-step{opacity:.72;transition:opacity .6s,background .4s,border-color .4s,transform .6s var(--ease)}
 .pr-step.on{opacity:1}
 .pr-step .no{transition:color .5s}
 .pr-step.on .no{color:#7BE0A0}
-.pr-step p{font-family:var(--fm);font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:#9FA3C2;margin-top:.35rem}
+.pr-step p{font-family:var(--fm);font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:#C9CBE0;margin-top:.35rem}
 .pr-tags{display:flex;flex-wrap:wrap;gap:.4rem;align-self:end}
 .pr-tags span{font-size:.82rem;border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.3rem .7rem;color:#C9CBE0;opacity:0;transform:translateY(8px);transition:opacity .5s,transform .6s var(--ease)}
 .pr-step.on .pr-tags span{opacity:1;transform:none}
@@ -317,11 +283,8 @@ h1,h2,h3,p,figure{margin:0}
   body{font-size:16px}
   .dx-nav{height:64px}
   .dx-nav .btn{height:40px;padding-inline:1rem;font-size:.9rem}
-  .dx-logo{width:94px}
+  .dx-logo{width:72px}
   .dx-h1{font-size:clamp(2.2rem,11vw,2.8rem)}
-  .ts-pin{padding-top:88px}
-  .ts-truck{width:94vw}
-  .ts-hint{display:none}
   .dx-section{padding-block:4rem}
   .sv-visual{border-radius:22px}
   .pr-step{border-radius:20px}
@@ -332,7 +295,7 @@ h1,h2,h3,p,figure{margin:0}
 @media (max-width:900px){.sv-visual small{display:none}.sv-visual img{bottom:8%}}
 
 
-.ft-credit{display:block;margin-top:.9rem;font-size:.72rem;color:#7C80A3;max-width:30em;margin-left:auto}
+.ft-credit{display:block;margin-top:.9rem;font-size:.72rem;color:#A3A7C7;max-width:30em;margin-left:auto}
 @media (max-width:600px){.ft-credit{margin-left:0}}
 
 /* ---------- hero: big truck, tracker on the container ---------- */
@@ -377,7 +340,7 @@ h1,h2,h3,p,figure{margin:0}
 .ct-fields select,.ct-fields input{height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;padding:0 10px;width:100%;outline:none;font-size:13px}
 .ct-fields select:focus,.ct-fields input:focus{border-color:#7BE0A0}
 .ct-fields select option{color:var(--ink)}
-.ct-fields input::placeholder{color:#7C80A3}
+.ct-fields input::placeholder{color:#A3A7C7}
 .ct-fields .btn{grid-column:1/-1;height:40px;justify-content:center;border-radius:11px;font-size:14px}
 .ct-note{font-size:11.5px;color:#9FA3C2}
 .ct-live{position:relative;padding:20px 24px;background:linear-gradient(160deg,#262C6E 0%,#1C2158 70%);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;min-width:0}
@@ -394,21 +357,23 @@ h1,h2,h3,p,figure{margin:0}
 .ct-dot{position:absolute;top:50%;left:calc(var(--p)*100%);width:14px;height:14px;border-radius:50%;background:#2ED573;transform:translate(-50%,-50%);box-shadow:0 0 0 5px rgba(46,213,115,.22);transition:left 2.2s var(--ease)}
 .ct-stops{display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;color:#9FA3C2}
 .ct-steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none}
-.ct-steps li{border-top:2px solid rgba(255,255,255,.14);padding-top:7px;font-size:11px;color:#7C80A3;transition:color .5s,border-color .5s;min-width:0}
+.ct-steps li{border-top:2px solid rgba(255,255,255,.14);padding-top:7px;font-size:11px;color:#A3A7C7;transition:color .5s,border-color .5s;min-width:0}
 .ct-steps li b{display:block;font-weight:500;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ct-steps li span{font-family:var(--fm);font-size:10.5px}
 .ct-steps li.on{color:#C9CBE0;border-color:#2ED573}
 .ct-steps li.on b{color:#fff}
 
-/* narrow screens: the tracker drops under the truck as a normal card */
-.ct.stacked{position:relative;left:auto;top:auto;width:min(680px,calc(100vw - 2*var(--gutter)));aspect-ratio:auto;margin:clamp(1.4rem,4vw,2rem) auto 0}
-.ct.stacked .ct-in{position:relative;width:auto;height:auto;transform:none;grid-template-columns:1fr;border-radius:22px}
-.ct.stacked .ct-form{padding:20px;gap:12px}
-.ct.stacked .ct-live{padding:20px;gap:22px}
-.ct.stacked .ct-h{font-size:clamp(1.6rem,7vw,2rem)}
-.ct.stacked .ct-input input{height:46px;font-size:15px}
-.ct.stacked .ct-input .btn{height:46px}
-@media (max-width:520px){.ct.stacked .ct-fields{grid-template-columns:1fr 1fr}.ct.stacked .ct-fields label:nth-child(3){grid-column:1/-1}.ct.stacked .ct-steps{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:12px}}
+/* narrow screens: the tracker drops under the truck as a normal card (truck < ~930px wide, i.e. viewport < 991px) */
+@media (max-width:990px){
+  .ct{position:relative;left:auto;top:auto;width:min(680px,calc(100vw - 2*var(--gutter)));aspect-ratio:auto;margin:clamp(1.4rem,4vw,2rem) auto 0}
+  .ct .ct-in{position:relative;width:auto;height:auto;transform:none;grid-template-columns:1fr;border-radius:22px}
+  .ct .ct-form{padding:20px;gap:12px}
+  .ct .ct-live{padding:20px;gap:22px}
+  .ct .ct-h{font-size:clamp(1.6rem,7vw,2rem)}
+  .ct .ct-input input{height:46px;font-size:15px}
+  .ct .ct-input .btn{height:46px}
+}
+@media (max-width:520px){.ct .ct-fields{grid-template-columns:1fr 1fr}.ct .ct-fields label:nth-child(3){grid-column:1/-1}.ct .ct-steps{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:12px}}
 
 /* ---------- network map: 2D map, corridors rise in 3D ---------- */
 .nm{position:relative;background:#CDE4EC}
@@ -465,10 +430,10 @@ h1,h2,h3,p,figure{margin:0}
 }
 
 /* ---------- logo in preloader and footer ---------- */
-.pre-word{transform:skewX(-11deg)}
-.pre-word span{font-family:var(--font-logo),Georgia,serif;font-weight:400;letter-spacing:.02em;color:var(--logo-ink);font-size:clamp(1.3rem,3vw,2rem)}
-.pre-tag{font-family:var(--font-logo),Georgia,serif;font-weight:400;transform:skewX(-11deg);color:var(--logo-ink)}
-.ft-mark .ft-logo{width:min(440px,70vw)}
+.pre-word span{font-family:var(--font-logo),Georgia,serif;font-weight:800;letter-spacing:.01em;color:var(--logo-ink);font-size:clamp(1.3rem,3vw,2rem)}
+.pre-tag{display:flex;gap:clamp(.8rem,2.4vw,1.4rem)}
+.pre-tag img{width:clamp(38px,5vw,52px);height:auto}
+.ft-mark .ft-logo{width:min(380px,70vw)}
 
 /* ---------- partner logos ---------- */
 .pt{background:var(--white);border-bottom:1px solid var(--line);padding:clamp(1.6rem,3vw,2.4rem) 0 clamp(1.8rem,3.4vw,2.8rem);overflow:hidden}
@@ -492,3 +457,6 @@ h1,h2,h3,p,figure{margin:0}
 .nm-facts .tw{margin:0}
 .nm-sheet-head .tw{stroke:var(--c)}
 @media (max-width:899px){.nm-facts{display:none}}
+.no-intro .preloader{display:none}
+.nf{min-height:100vh;min-height:100svh;display:grid;place-content:center;justify-items:center;gap:1.4rem;text-align:center;padding:2rem var(--gutter)}
+.nf-logo{width:min(320px,70vw);margin-bottom:1rem}

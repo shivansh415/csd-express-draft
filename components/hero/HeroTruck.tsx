@@ -17,7 +17,7 @@ export default function HeroTruck() {
       </div>
       <div className="ht-stage">
         <div className="ht-truck">
-          <Image src="/trucks/truck-side.png" alt="CSD Supply Chain truck, side view" width={1282} height={503} priority loading="eager" sizes="(max-width: 1400px) 94vw, 1320px" />
+          <Image src="/trucks/truck-side.png" alt="CSD Supply Chain truck, side view" width={1282} height={503} preload fetchPriority="high" loading="eager" sizes="(max-width: 1400px) 94vw, 1320px" />
           <i className="ht-shadow" />
           <ContainerTracker />
         </div>

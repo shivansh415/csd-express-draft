@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import BrandLogo from './BrandLogo';
 
-export default function DxNav({ dark = false, home = '/directions' }: { dark?: boolean; home?: string }) {
+export default function DxNav({ dark = false, home = '/' }: { dark?: boolean; home?: string }) {
   return (
     <header id="nav" className={`dx-nav${dark ? ' dark' : ''}`}>
       <Link className="dx-brand" href={home} aria-label="CSD Supply Chain">
-        <BrandLogo compact className="dx-logo" tone={dark ? 'light' : 'brand'} />
+        <BrandLogo variant="mark" className="dx-logo" tone={dark ? 'light' : 'brand'} />
       </Link>
       <nav aria-label="Sections">
         <a href="#track">Track</a>

@@ -20,11 +20,11 @@ const steps = [
 ];
 
 /* Tracker painted onto the truck's container: track a consignment or request a pickup.
-   Sits over the container panel while it can be read at >= 70% scale, otherwise drops below the truck. */
+   Sits over the container panel on wide screens; below 991px (CSS) it drops under the truck as a card, so the
+   layout is decided before any script runs and nothing shifts on load. */
 export default function ContainerTracker() {
   const hostRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [stacked, setStacked] = useState(false);
   const [tab, setTab] = useState(0);
   const [idType, setIdType] = useState(0);
   const [value, setValue] = useState('');
@@ -37,7 +37,6 @@ export default function ContainerTracker() {
     const ro = new ResizeObserver(() => {
       const s = (truck.clientWidth * 0.721) / DESIGN_W;
       setScale(s);
-      setStacked(s < 0.7);
     });
     ro.observe(truck);
     return () => { ro.disconnect(); timers.current.forEach(clearTimeout); };
@@ -68,7 +67,7 @@ export default function ContainerTracker() {
   const p = live ? steps[step].pos : 0;
 
   return (
-    <div className={`ct${stacked ? ' stacked' : ''}`} id="track" ref={hostRef} style={{ '--s': scale } as React.CSSProperties}>
+    <div className="ct" id="track" ref={hostRef} style={{ '--s': scale } as React.CSSProperties}>
       <div className="ct-in">
         <div className="ct-form">
           <div className="ct-tabs" role="tablist" style={{ '--i': tab } as React.CSSProperties}>
@@ -88,7 +87,7 @@ export default function ContainerTracker() {
               </div>
               <form className="ct-input" onSubmit={onTrack}>
                 <label className="sr" htmlFor="ctId">{idTypes[idType].label}</label>
-                <input id="ctId" value={value} onChange={(e) => setValue(e.target.value)} placeholder={idTypes[idType].placeholder} inputMode={idType === 2 ? 'tel' : 'text'} autoComplete="off" />
+                <input id="ctId" value={value} onChange={(e) => setValue(e.target.value)} placeholder={idTypes[idType].placeholder} inputMode={idType === 2 ? 'tel' : 'text'} autoComplete="off" maxLength={40} spellCheck={false} />
                 <button className="btn solid" type="submit"><span>Track</span></button>
               </form>
               {notFound ? (
@@ -117,7 +116,7 @@ export default function ContainerTracker() {
                   <select name="load"><option>Part load (PTL)</option><option>Full truck load (FTL)</option><option>Trailer</option><option>Container</option><option>Warehousing</option></select>
                 </label>
                 <label>Weight
-                  <input name="weight" placeholder="e.g. 400 kg" />
+                  <input name="weight" placeholder="e.g. 400 kg" maxLength={30} />
                 </label>
                 <button className="btn solid" type="submit"><span>Continue on WhatsApp</span></button>
               </form>

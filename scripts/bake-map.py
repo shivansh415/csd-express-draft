@@ -5,9 +5,9 @@ Input : Terrarium elevation tiles (Mapzen / AWS Terrain Tiles, open data) fetche
 Output (public/map):
         map2d.webp    flat pastel map of the wide window: sea depth, soft relief, rivers, sea and state names
         color.webp    realistic land colour of the zone window, with baked sun, cast shadows, rivers, towns
-        height.png    zone elevation, sqrt-encoded: metres = (v/255)^2 * HEIGHT_MAX_M
-        forest.png    zone tree density
-        land.png      zone mainland mask
+        height.webp   zone elevation, sqrt-encoded: metres = (v/255)^2 * HEIGHT_MAX_M (lossless)
+        forest.webp   zone tree density (lossless)
+        land.webp     zone mainland mask (lossless)
 Usage : python3 scripts/bake-map.py <tiles-dir> public/map
 WIDE and ZONE must match components/network/geo.ts. Labels use macOS Avenir Next; any bold sans works.
 """
@@ -239,9 +239,9 @@ light, sh, ao = shade(hm / 1000 * YSCALE, dlon * 0.97, dlat, 110)
 col = np.clip(col * (light * (1 - 0.42 * sh) * ao)[..., None], 0, 255)
 col = np.where(mask[..., None] > 0, col, rgb('#B0946A'))
 
-Image.fromarray(col.astype(np.uint8)).save(f'{OUT}/color.webp', quality=88, method=6)
-Image.fromarray((mask.reshape(1536, 2, 1536, 2).mean((1, 3)) * 255).astype(np.uint8)).save(f'{OUT}/land.png', optimize=True)
+Image.fromarray(col.astype(np.uint8)).save(f'{OUT}/color.webp', quality=82, method=6)
+Image.fromarray((mask.reshape(1536, 2, 1536, 2).mean((1, 3)) * 255).astype(np.uint8)).convert('RGB').save(f'{OUT}/land.webp', lossless=True, method=6)
 h1 = hm.reshape(1536, 2, 1536, 2).mean((1, 3))
-Image.fromarray((np.sqrt(np.clip(h1 / HEIGHT_MAX_M, 0, 1)) * 255 + .5).astype(np.uint8)).save(f'{OUT}/height.png', optimize=True)
-Image.fromarray((forest.reshape(768, 4, 768, 4).mean((1, 3)) * 255).astype(np.uint8)).save(f'{OUT}/forest.png', optimize=True)
+Image.fromarray((np.sqrt(np.clip(h1 / HEIGHT_MAX_M, 0, 1)) * 255 + .5).astype(np.uint8)).convert('RGB').save(f'{OUT}/height.webp', lossless=True, method=6)
+Image.fromarray((forest.reshape(768, 4, 768, 4).mean((1, 3)) * 255).astype(np.uint8)).convert('RGB').save(f'{OUT}/forest.webp', lossless=True, method=6)
 print('zone done')

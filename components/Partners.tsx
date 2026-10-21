@@ -12,7 +12,7 @@ export default function Partners() {
   const row = (hidden: boolean) => (
     <ul className="pt-row" aria-hidden={hidden || undefined}>
       {partners.map(([file, name, w, h]) => (
-        <li key={file}><Image src={`/partners/${file}.webp`} alt={hidden ? '' : name} width={w} height={h} sizes="200px" /></li>
+        <li key={file}><Image src={`/partners/${file}.webp`} alt={hidden ? '' : name} width={w} height={h} sizes="(max-width: 760px) 110px, 150px" /></li>
       ))}
     </ul>
   );

@@ -10,7 +10,7 @@ import { CustomEase } from 'gsap/CustomEase';
 import Lenis from 'lenis';
 
 /* All motion for the site. Markup lives in server components; this attaches to it via data attributes and ids:
-   data-split (line reveal), data-reveal (fade up), data-parallax, data-float, data-count, data-truck-scene,
+   data-split (line reveal), data-reveal (fade up), data-parallax, data-float, data-count,
    plus #preloader, #nav, #marqueeTrack, .ht, #procPin, #commitText when they are on the page. */
 export default function SiteFX() {
   const path = usePathname();
@@ -62,33 +62,6 @@ export default function SiteFX() {
     /* ---------- everything scroll- and intro-driven; runs once the preloader lifts ---------- */
     const init = () => ctx.add(() => {
       /* pins first, in page order, so later triggers measure with their spacing in place */
-      $$('[data-truck-scene]').forEach((scene) => {
-        const q = gsap.utils.selector(scene);
-        const truck = q('.ts-truck');
-        const paths = q('.ts-truck > .ts-logo path');
-        const onLoad = scene.dataset.enter === 'load';
-        gsap.set(paths, { fillOpacity: 0 });
-        if (onLoad) {
-          gsap.from(truck, { x: () => -window.innerWidth, duration: 1.9, ease: 'power3.out', delay: 0.2 });
-          gsap.from(q('.ts-road i'), { backgroundPositionX: 900, duration: 1.9, ease: 'power3.out', delay: 0.2 });
-        }
-        const tl = gsap.timeline({ scrollTrigger: { trigger: q('.ts-pin'), start: 'top top', end: onLoad ? '+=150%' : '+=190%', pin: true, scrub: 0.6, anticipatePin: 1 } });
-        const t0 = onLoad ? 0.04 : 0.3;
-        if (!onLoad) {
-          tl.fromTo(truck, { x: () => -window.innerWidth }, { x: 0, duration: 0.3, ease: 'power2.out' }, 0)
-            .fromTo(q('.ts-road i'), { backgroundPositionX: 900 }, { backgroundPositionX: 0, duration: 0.3, ease: 'power2.out' }, 0);
-        }
-        const span = 0.86 - t0;
-        tl.from(q('.ts-logo .c'), { drawSVG: '0%', duration: span * 0.34, ease: 'none' }, t0)
-          .from(q('.ts-logo .s'), { drawSVG: '0%', duration: span * 0.34, ease: 'none' }, t0 + span * 0.2)
-          .from(q('.ts-logo .d'), { drawSVG: '0%', duration: span * 0.34, ease: 'none' }, t0 + span * 0.42)
-          .from(q('.ts-logo .r'), { drawSVG: '0%', duration: span * 0.2, ease: 'none' }, t0 + span * 0.66)
-          .to(paths, { fillOpacity: 1, duration: span * 0.16, stagger: span * 0.03, ease: 'power1.out' }, t0 + span * 0.8)
-          .fromTo(q('.ts-tag'), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.07 }, 0.88)
-          .to(q('.ts-hint'), { autoAlpha: 0, duration: 0.05 }, t0)
-          .to({}, { duration: 0.05 }, 0.95);
-      });
-
       /* hero: the truck drives in, then the tracker wipes onto the container */
       if ($('.ht')) {
         gsap.from('.ht-truck', { x: () => -window.innerWidth, duration: 1.8, ease: 'power3.out', delay: 0.1 });
@@ -134,7 +107,7 @@ export default function SiteFX() {
 
       /* headline line reveals */
       $$('[data-split]').forEach((el) => {
-        const sp = new SplitText(el, { type: 'lines', mask: 'lines' });
+        const sp = new SplitText(el, { type: 'lines', mask: 'lines', aria: 'none' });
         gsap.set(el, { visibility: 'visible' });
         gsap.from(sp.lines, { yPercent: 110, duration: 1.2, stagger: 0.09, ease: 'osmo', scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
       });
@@ -194,7 +167,7 @@ export default function SiteFX() {
       }
       const commit = $('#commitText');
       if (commit) {
-        const words = new SplitText(commit, { type: 'words', wordsClass: 'w' });
+        const words = new SplitText(commit, { type: 'words', wordsClass: 'w', aria: 'none' });
         gsap.to(words.words, { color: '#1C2158', stagger: 0.08, ease: 'none', scrollTrigger: { trigger: commit, start: 'top 75%', end: 'bottom 45%', scrub: 0.5 } });
       }
 
@@ -220,40 +193,49 @@ export default function SiteFX() {
       if (pre) pre.style.display = 'none';
       ctx.add(() => {
         gsap.set('[data-split],[data-reveal]', { visibility: 'visible' });
-        gsap.set('.ts-tag', { autoAlpha: 1 });
-        gsap.set('.ts-truck > .ts-logo path', { fillOpacity: 1 });
         gsap.set('#commitText', { color: '#1C2158' });
         $$('.pr-step').forEach((el) => el.classList.add('on'));
         $('#pausePlay')?.classList.add('play');
       });
-    } else if (pre) {
+    } else if (pre && !document.documentElement.classList.contains('no-intro')) {
       lenis?.stop();
+      try { sessionStorage.setItem('csd-intro', '1'); } catch { /* storage blocked: intro shows again next time */ }
       ctx.add(() => {
         const count = { v: 0 };
         const countEl = $('#preCount');
         const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' }, paused: true });
-        tl.from('.preloader .mark .c', { drawSVG: '0%', duration: 0.9 }, 0.1)
-          .from('.preloader .mark .s', { drawSVG: '0%', duration: 0.9 }, 0.35)
-          .from('.preloader .mark .d', { drawSVG: '0%', duration: 0.9 }, 0.6)
-          .from('.preloader .mark .r', { drawSVG: '0%', duration: 0.5 }, 0.95)
-          .to('.preloader .mark path', { fillOpacity: 1, duration: 0.45, stagger: 0.06, ease: 'power1.out' }, 1.2)
-          .to('.pre-word span', { y: 0, duration: 0.8, ease: 'osmo' }, 1.3)
-          .to('.pre-tag', { opacity: 1, duration: 0.5 }, 1.55)
-          .to(count, { v: 100, duration: 1.9, onUpdate: () => { if (countEl) countEl.textContent = String(Math.round(count.v)).padStart(2, '0'); } }, 0.1)
-          .addLabel('out', 2.25)
-          .to('.pre-count, .pre-route, .pre-tag', { autoAlpha: 0, duration: 0.4 }, 'out')
-          .to('.preloader .mark, .pre-word', { y: -40, autoAlpha: 0, duration: 0.6, ease: 'power2.in' }, 'out')
-          .to(pre, { clipPath: 'inset(0 0 100% 0)', duration: 1.0, ease: 'expo.inOut' }, 'out+=0.25')
-          .add(() => { lenis?.start(); init(); }, 'out+=0.25')
+        tl.from('.preloader .mark .c', { drawSVG: '0%', duration: 0.65 }, 0.05)
+          .from('.preloader .mark .s', { drawSVG: '0%', duration: 0.65 }, 0.22)
+          .from('.preloader .mark .d', { drawSVG: '0%', duration: 0.65 }, 0.4)
+          .from('.preloader .mark .r', { drawSVG: '0%', duration: 0.35 }, 0.65)
+          .to('.preloader .mark path', { fillOpacity: 1, duration: 0.35, stagger: 0.05, ease: 'power1.out' }, 0.82)
+          .to('.pre-word span', { y: 0, duration: 0.6, ease: 'osmo' }, 0.9)
+          .to('.pre-tag', { opacity: 1, duration: 0.4 }, 1.05)
+          .to(count, { v: 100, duration: 1.4, onUpdate: () => { if (countEl) countEl.textContent = String(Math.round(count.v)).padStart(2, '0'); } }, 0.05)
+          .addLabel('out', 1.6)
+          .to('.pre-count, .pre-route, .pre-tag', { autoAlpha: 0, duration: 0.3 }, 'out')
+          .to('.preloader .mark, .pre-word', { y: -30, autoAlpha: 0, duration: 0.45, ease: 'power2.in' }, 'out')
+          .to(pre, { clipPath: 'inset(0 0 100% 0)', duration: 0.8, ease: 'expo.inOut' }, 'out+=0.15')
+          .add(() => { lenis?.start(); init(); }, 'out+=0.15')
           .set(pre, { display: 'none' });
         gsap.set(pre, { clipPath: 'inset(0 0 0% 0)' });
-        Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise((r) => setTimeout(r, 1500))]).then(() => { if (alive) tl.play(); });
+        Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), new Promise((r) => setTimeout(r, 700))]).then(() => { if (alive) tl.play(); });
       });
     } else {
+      if (pre) pre.style.display = 'none';
       init();
     }
 
     document.fonts?.ready.then(() => alive && ScrollTrigger.refresh());
+    /* re-measure pinned sections after a real width change (window resize, device rotation); without this the
+       pin spacers keep their old width and the page scrolls sideways */
+    let lastW = window.innerWidth, resizeT = 0;
+    window.addEventListener('resize', () => {
+      if (window.innerWidth === lastW) return; // mobile address-bar show/hide only changes height
+      lastW = window.innerWidth;
+      clearTimeout(resizeT);
+      resizeT = window.setTimeout(() => alive && ScrollTrigger.refresh(), 250);
+    }, { signal });
 
     return () => {
       alive = false;

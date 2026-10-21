@@ -10,7 +10,7 @@ export default function Footer() {
           <div><b>Sections</b><p><a href="#track">Track a shipment</a><br /><a href="#network">Routes</a><br /><a href="#services">Services</a><br /><a href="#process">How we work</a></p></div>
         </div>
         <div className="ft-mark">
-          <BrandLogo tagline tone="light" className="ft-logo" />
+          <BrandLogo tone="light" className="ft-logo" />
           <div style={{ textAlign: 'right' }}>
             &copy; 2026 CSD Supply Chain
             <small className="ft-credit">Map elevation: Mapzen Terrain Tiles via AWS Open Data (SRTM, GMTED, ETOPO1 and others).</small>
