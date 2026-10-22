@@ -466,5 +466,5 @@ h1,h2,h3,p,figure{margin:0}
 .ct-mouse{position:relative;width:26px;height:40px;border:2px solid var(--ink);border-radius:14px}
 .ct-mouse i{position:absolute;left:50%;top:7px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:var(--green);animation:ct-wheel 1.6s var(--ease) infinite}
 @keyframes ct-wheel{0%{transform:translateY(0);opacity:1}70%{transform:translateY(12px);opacity:0}100%{transform:translateY(0);opacity:0}}
-@media (max-width:990px){.ct-cue{min-height:180px}}
+@media (max-width:990px){.ct-cue{justify-content:flex-start;padding-top:clamp(28px,6vh,48px)}} /* the hidden card runs below the fold here: keep the cue right under the truck */
 @media (prefers-reduced-motion:reduce){.ct-mouse i{animation:none}}

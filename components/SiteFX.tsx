@@ -35,12 +35,14 @@ export default function SiteFX() {
       gsap.ticker.add(raf);
       gsap.ticker.lagSmoothing(0);
     }
+    let heroGate: (() => void) | null = null; // set while the hero holds the first scroll (see the hero block)
     document.addEventListener('click', (e) => {
       const a = (e.target as Element).closest?.('a[href^="#"]');
       const h = a?.getAttribute('href');
       const el = h && h.length > 1 ? document.querySelector<HTMLElement>(h) : null;
       if (!el) return;
       e.preventDefault();
+      heroGate?.(); // an in-page link always works, even before the first scroll
       if (lenis) lenis.scrollTo(el, { offset: -70, duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) });
       else el.scrollIntoView({ behavior: RM ? 'auto' : 'smooth' });
     }, { signal });
@@ -64,29 +66,56 @@ export default function SiteFX() {
       /* pins first, in page order, so later triggers measure with their spacing in place */
       /* hero: the truck drives in, then the tracker wipes onto the container */
       if ($('.ht')) {
-        gsap.from('.ht-truck', { x: () => -window.innerWidth, duration: 2.2, ease: 'power3.out', delay: 0.1 });
+        const truckIn = gsap.from('.ht-truck', { x: () => -window.innerWidth, duration: 2.2, ease: 'power3.out', delay: 0.1 });
         gsap.from('.ht .ts-road i', { backgroundPositionX: 900, duration: 2.2, ease: 'power3.out', delay: 0.1 });
-        /* the tracker panel stays hidden (CSS) with a scroll cue on the container; the first bit of scrolling
-           (or keyboard focus reaching it) makes the panel cover the container, then its contents settle in */
+        /* the first scroll belongs to the hero: the page stays put while the tracker panel covers the container,
+           and only the next scroll moves the page. Before that, a cue on the container invites the scroll. */
         const parts = $$('.ct-form > *, .ct-top, .ct-route, .ct-steps li');
         gsap.set(parts, { autoAlpha: 0, y: 14 });
         const cue = gsap.fromTo('.ct-cue', { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out', delay: 1.9 });
+        const html = document.documentElement;
+        let shown = false, locked = false, lastGesture = 0, touchY = 0;
+        const lock = () => { locked = true; if (lenis) lenis.stop(); else html.style.overflow = 'hidden'; };
+        const unlock = () => {
+          if (!locked) return;
+          locked = false; heroGate = null;
+          if (lenis) lenis.start(); else html.style.overflow = '';
+        };
+        // hand scrolling back only once the gesture has ended, so trackpad momentum does not carry the page down
+        const settle = () => { if (performance.now() - lastGesture > 280) unlock(); else window.setTimeout(settle, 120); };
         const reveal = gsap.timeline({ paused: true })
           .fromTo('.ct-in', { clipPath: 'inset(0% 100% 0% 0% round 18px)' }, { clipPath: 'inset(0% 0% 0% 0% round 18px)', duration: 1.1, ease: 'power3.inOut' })
           .to(parts, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.06 }, 0.55)
+          .call(settle, [], 1.1)
           .set('.ct-in', { clipPath: 'none' }); // keep an inline value: the CSS default is the hidden state
-        let shown = false;
         const show = () => {
           if (shown) return;
           shown = true;
           cue.kill();
           gsap.to('.ct-cue', { autoAlpha: 0, y: -12, duration: 0.35, ease: 'power2.in' });
-          reveal.play();
+          if (truckIn.progress() < 1) truckIn.eventCallback('onComplete', () => reveal.play()); // let the truck park first
+          else reveal.play();
         };
-        const onScroll = () => { if (window.scrollY > 12) show(); };
-        window.addEventListener('scroll', onScroll, { passive: true, signal });
-        $('.ct')?.addEventListener('focusin', show, { signal });
-        onScroll(); // page restored part-way down
+        const intent = () => { lastGesture = performance.now(); show(); };
+        window.addEventListener('wheel', (e) => {
+          if (!locked) return;
+          e.preventDefault();
+          if (e.deltaY > 0) intent(); else lastGesture = performance.now();
+        }, { passive: false, signal });
+        window.addEventListener('touchstart', (e) => { touchY = e.touches[0]?.clientY ?? 0; }, { passive: true, signal });
+        window.addEventListener('touchmove', (e) => {
+          if (!locked) return;
+          e.preventDefault();
+          if (touchY - (e.touches[0]?.clientY ?? touchY) > 6) intent(); else lastGesture = performance.now();
+        }, { passive: false, signal });
+        window.addEventListener('keydown', (e) => {
+          if (!locked || (e.target as HTMLElement).closest?.('input, select, textarea')) return;
+          if (['ArrowDown', 'PageDown', ' ', 'End'].includes(e.key)) { e.preventDefault(); intent(); }
+        }, { signal });
+        $('.ct')?.addEventListener('focusin', () => { show(); unlock(); }, { signal });
+        window.addEventListener('scroll', () => { if (window.scrollY > 12) { show(); unlock(); } }, { passive: true, signal }); // e.g. scrollbar drag
+        heroGate = () => { show(); unlock(); };
+        if (window.scrollY > 12) show(); else lock(); // page restored part-way down: no gate
       }
 
       /* process: horizontal scroll with the truck riding the rail; each step switches on as the truck reaches it */
@@ -261,6 +290,8 @@ export default function SiteFX() {
 
     return () => {
       alive = false;
+      heroGate?.();
+      document.documentElement.style.overflow = '';
       abort.abort();
       ctx.revert();
       gsap.ticker.remove(raf);
