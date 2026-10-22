@@ -313,7 +313,7 @@ h1,h2,h3,p,figure{margin:0}
 
 /* tracker: designed at 960 x 254 and scaled onto the container panel (left 4.6%, top 8.5% of the truck image) */
 .ct{position:absolute;z-index:3;left:4.6%;top:8.5%;width:72.1%;aspect-ratio:960/254}
-.ct-in{position:absolute;left:0;top:0;width:960px;height:254px;transform:scale(var(--s));transform-origin:0 0;display:grid;grid-template-columns:470px 1fr;border-radius:18px;overflow:hidden;background:var(--ink);color:#fff;box-shadow:0 18px 40px -22px rgba(28,33,88,.7),inset 0 0 0 1px rgba(255,255,255,.06)}
+.ct-in{clip-path:inset(0% 100% 0% 0% round 18px);position:absolute;left:0;top:0;width:960px;height:254px;transform:scale(var(--s));transform-origin:0 0;display:grid;grid-template-columns:470px 1fr;border-radius:18px;overflow:hidden;background:var(--ink);color:#fff;box-shadow:0 18px 40px -22px rgba(28,33,88,.7),inset 0 0 0 1px rgba(255,255,255,.06)}
 .ct-form{padding:20px 24px;display:flex;flex-direction:column;gap:10px;min-width:0}
 .ct-tabs{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;position:relative;background:rgba(255,255,255,.08);border-radius:999px;padding:3px;align-self:flex-start}
 .ct-tabs button,.ct-seg button{position:relative;z-index:1;background:none;border:0;cursor:pointer;padding:6px 14px;border-radius:999px;font-size:13px;font-weight:500;color:#B9BCD3;transition:color .35s;white-space:nowrap}

@@ -64,9 +64,22 @@ export default function SiteFX() {
       /* pins first, in page order, so later triggers measure with their spacing in place */
       /* hero: the truck drives in, then the tracker wipes onto the container */
       if ($('.ht')) {
-        gsap.from('.ht-truck', { x: () => -window.innerWidth, duration: 1.8, ease: 'power3.out', delay: 0.1 });
-        gsap.from('.ht .ts-road i', { backgroundPositionX: 900, duration: 1.8, ease: 'power3.out', delay: 0.1 });
-        gsap.fromTo('.ct-in', { clipPath: 'inset(0% 100% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.9, ease: 'power2.inOut', delay: 1.45, clearProps: 'clipPath' });
+        gsap.from('.ht-truck', { x: () => -window.innerWidth, duration: 2.2, ease: 'power3.out', delay: 0.1 });
+        gsap.from('.ht .ts-road i', { backgroundPositionX: 900, duration: 2.2, ease: 'power3.out', delay: 0.1 });
+        /* the tracker panel (hidden by CSS until now) unrolls across the container once the truck has stopped,
+           then its contents settle in one after another */
+        const parts = $$('.ct-form > *, .ct-top, .ct-route, .ct-steps li');
+        gsap.set(parts, { autoAlpha: 0, y: 14 });
+        const reveal = gsap.timeline({ paused: true })
+          .fromTo('.ct-in', { clipPath: 'inset(0% 100% 0% 0% round 18px)' }, { clipPath: 'inset(0% 0% 0% 0% round 18px)', duration: 1.6, ease: 'power3.inOut' })
+          .to(parts, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.07 }, 0.9)
+          .set('.ct-in', { clipPath: 'none' }); // keep an inline value: the CSS default is the hidden state
+        if (matchMedia('(max-width: 990px)').matches) {
+          // the tracker sits under the truck here: play it when it scrolls into view
+          ScrollTrigger.create({ trigger: '.ct', start: 'top 85%', once: true, onEnter: () => reveal.play() });
+        } else {
+          gsap.delayedCall(2.0, () => reveal.play());
+        }
       }
 
       /* process: horizontal scroll with the truck riding the rail; each step switches on as the truck reaches it */
@@ -194,6 +207,7 @@ export default function SiteFX() {
       ctx.add(() => {
         gsap.set('[data-split],[data-reveal]', { visibility: 'visible' });
         gsap.set('#commitText', { color: '#1C2158' });
+        gsap.set('.ct-in', { clipPath: 'none' });
         $$('.pr-step').forEach((el) => el.classList.add('on'));
         $('#pausePlay')?.classList.add('play');
       });

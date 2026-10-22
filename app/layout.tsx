@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <noscript>
-          <style>{'.preloader{display:none}[data-split],[data-reveal]{visibility:visible}'}</style>
+          <style>{'.preloader{display:none}[data-split],[data-reveal]{visibility:visible}.ct-in{clip-path:none!important}'}</style>
         </noscript>
         {children}
       </body>
