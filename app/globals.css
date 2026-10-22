@@ -330,6 +330,8 @@ h1,h2,h3,p,figure{margin:0}
 .ct-fields label{display:grid;gap:4px;font-size:11.5px;color:#9FA3C2;min-width:0}
 .ct-fields select,.ct-fields input{height:38px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;padding:0 10px;width:100%;outline:none;font-size:13px}
 .ct-fields select:focus,.ct-fields input:focus{border-color:#7BE0A0}
+/* own chevron with breathing room: the native arrow sits hard against the edge */
+.ct-fields select,.pk-f select{-webkit-appearance:none;appearance:none;padding-right:34px;text-overflow:ellipsis;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23C9CBE0' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;background-size:11px 8px}
 .ct-fields select option{color:var(--ink)}
 .ct-fields input::placeholder{color:#A3A7C7}
 .ct-note{font-size:11.5px;line-height:1.45;color:#9FA3C2}
@@ -348,16 +350,17 @@ h1,h2,h3,p,figure{margin:0}
 .pk-grid .w2{grid-column:span 2}.pk-grid .w3{grid-column:1/-1}
 .pk-f{display:grid;gap:4px;font-size:11.5px;color:#9FA3C2;min-width:0;margin:0;padding:0;border:0}
 .pk-f i{font-style:normal;opacity:.75}
-.pk-f input,.pk-f select,.pk-dim{height:34px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;padding:0 10px;width:100%;min-width:0;outline:none;font-size:13px;font-family:inherit;transition:border-color .25s,background .25s}
-.pk-f input:focus,.pk-f select:focus,.pk-dim:focus-within{border-color:#7BE0A0;background:rgba(255,255,255,.09)}
+.pk-f input,.pk-f select,.pk-dim{height:34px;border-radius:9px;border:1px solid rgba(255,255,255,.18);background-color:rgba(255,255,255,.06);color:#fff;padding:0 10px;width:100%;min-width:0;outline:none;font-size:13px;font-family:inherit;transition:border-color .25s,background .25s}
+.pk-f input:focus,.pk-f select:focus,.pk-dim:focus-within{border-color:#7BE0A0;background-color:rgba(255,255,255,.09)}
 .pk-f input::placeholder{color:#8F93B6}
+.pk-f select{padding-right:32px;background-position:right 12px center}
 .pk-f select option{color:var(--ink)}
 .pk-f input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .pk-f input::-webkit-outer-spin-button,.pk-f input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .pk-step.was .pk-f input:invalid,.pk-step.was .pk-f select:invalid{border-color:#F28B82}
 .pk-dim{display:flex;align-items:center;padding:0 4px;color:#8F93B6}
 .pk-dim input{height:100%;border:0;background:none;padding:0 4px;text-align:center}
-.pk-dim input:focus{background:none}
+.pk-dim input:focus{background-color:transparent}
 .pk-dim input+input{border-left:1px solid rgba(255,255,255,.14);border-radius:0}
 .pk-days legend{padding:0;margin-bottom:4px}
 .pk-days>span{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
