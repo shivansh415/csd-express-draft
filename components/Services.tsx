@@ -13,7 +13,7 @@ export default function Services() {
     <section className="dx-section" id="services">
       <div className="wrap">
         <div className="dx-head">
-          <p className="dx-eyebrow big">Core services</p>
+          <p className="dx-eyebrow">Core services</p>
           <h2 className="dx-h2" data-split>What we move, and how.</h2>
         </div>
         <div className="sv-grid">
