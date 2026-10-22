@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import PickupSteps from './PickupSteps';
 
 const SAMPLE = 'CSD-BLR-26-04719';
 const CITIES = ['Hyderabad', 'Vijayawada', 'Chennai', 'Madurai', 'Coimbatore', 'Kochi', 'Calicut'];
@@ -30,6 +31,8 @@ export default function ContainerTracker() {
   const [value, setValue] = useState('');
   const [step, setStep] = useState(-1); // -1 idle; otherwise index of the latest reached step
   const [notFound, setNotFound] = useState('');
+  const [route, setRoute] = useState(`Bengaluru to ${CITIES[0]}`);
+  const [load, setLoad] = useState('Part load (PTL)');
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
@@ -56,13 +59,6 @@ export default function ContainerTracker() {
     [1, 2, 3].forEach((s, i) => timers.current.push(setTimeout(() => setStep(s), 500 * (i + 1))));
   };
   const onTrack = (e: FormEvent) => { e.preventDefault(); track(value.trim()); };
-  const onBook = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const d = new FormData(e.currentTarget);
-    const text = `Pickup request: ${d.get('route')}. Load: ${d.get('load')}. Weight: ${d.get('weight') || 'not sure yet'}.`;
-    window.open(`${WHATSAPP}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
-  };
-
   const live = step >= 0;
   const p = live ? steps[step].pos : 0;
 
@@ -108,42 +104,42 @@ export default function ContainerTracker() {
           ) : (
             <>
               <h2 className="ct-h">On tonight&rsquo;s <em>truck.</em></h2>
-              <form className="ct-fields" onSubmit={onBook}>
+              <div className="ct-fields">
                 <label>Route
-                  <select name="route">
+                  <select name="route" value={route} onChange={(e) => setRoute(e.target.value)}>
                     <optgroup label="From Bengaluru">{CITIES.map((c) => <option key={c}>Bengaluru to {c}</option>)}</optgroup>
                     <optgroup label="To Bengaluru">{CITIES.map((c) => <option key={c}>{c} to Bengaluru</option>)}</optgroup>
                     <option>Other (South India)</option>
                   </select>
                 </label>
                 <label>Load type
-                  <select name="load"><option>Part load (PTL)</option><option>Full truck load (FTL)</option><option>Trailer</option><option>Container</option><option>Warehousing</option></select>
+                  <select name="load" value={load} onChange={(e) => setLoad(e.target.value)}>
+                    <option>Part load (PTL)</option><option>Full truck load (FTL)</option><option>Trailer</option><option>Container</option><option>Warehousing</option>
+                  </select>
                 </label>
-                <label>Weight
-                  <input name="weight" placeholder="e.g. 400 kg" maxLength={30} />
-                </label>
-                <button className="btn solid" type="submit"><span>Continue on WhatsApp</span></button>
-              </form>
-              <p className="ct-note">Opens WhatsApp with your request ready to send to the dispatch desk.</p>
+              </div>
+              <p className="ct-note">Four quick steps: package, pickup, delivery and pickup day. WhatsApp then opens with your request ready for the dispatch desk, who confirm the slot and rate.</p>
             </>
           )}
         </div>
 
-        <div className="ct-live" style={{ '--p': p } as React.CSSProperties} aria-live="polite">
-          <div className="ct-top">
-            <div className="ct-lr">{live ? 'LR number' : 'Tonight on the Hyderabad lane'}<b>{live ? SAMPLE : 'Bengaluru 22:30 → Hyderabad 05:45'}</b></div>
-            <span className={`ct-status${live ? ' live' : ''}`}>{live ? (step >= 3 ? 'In transit, crossing Kurnool' : steps[step].name) : 'Lanes open'}</span>
+        {tab === 1 ? <PickupSteps route={route} load={load} whatsapp={WHATSAPP} /> : (
+          <div className="ct-live" style={{ '--p': p } as React.CSSProperties} aria-live="polite">
+            <div className="ct-top">
+              <div className="ct-lr">{live ? 'LR number' : 'Tonight on the Hyderabad lane'}<b>{live ? SAMPLE : 'Bengaluru 22:30 → Hyderabad 05:45'}</b></div>
+              <span className={`ct-status${live ? ' live' : ''}`}>{live ? (step >= 3 ? 'In transit, crossing Kurnool' : steps[step].name) : 'Lanes open'}</span>
+            </div>
+            <div className="ct-route">
+              <div className="ct-line"><i /><b className="ct-dot" /></div>
+              <div className="ct-stops"><span>Bengaluru</span><span>Anantapur</span><span>Kurnool</span><span>Hyderabad</span></div>
+            </div>
+            <ol className="ct-steps">
+              {steps.map((s, i) => (
+                <li key={s.name} className={i <= step ? 'on' : ''}><b>{s.name}</b><span>{s.time}</span></li>
+              ))}
+            </ol>
           </div>
-          <div className="ct-route">
-            <div className="ct-line"><i /><b className="ct-dot" /></div>
-            <div className="ct-stops"><span>Bengaluru</span><span>Anantapur</span><span>Kurnool</span><span>Hyderabad</span></div>
-          </div>
-          <ol className="ct-steps">
-            {steps.map((s, i) => (
-              <li key={s.name} className={i <= step ? 'on' : ''}><b>{s.name}</b><span>{s.time}</span></li>
-            ))}
-          </ol>
-        </div>
+        )}
       </div>
     </div>
   );
