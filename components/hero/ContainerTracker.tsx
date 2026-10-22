@@ -68,6 +68,10 @@ export default function ContainerTracker() {
 
   return (
     <div className="ct" id="track" ref={hostRef} style={{ '--s': scale } as React.CSSProperties}>
+      <div className="ct-cue" aria-hidden="true">
+        <span className="ct-mouse"><i /></span>
+        <span>Scroll to track your cargo</span>
+      </div>
       <div className="ct-in">
         <div className="ct-form">
           <div className="ct-tabs" role="tablist" style={{ '--i': tab } as React.CSSProperties}>

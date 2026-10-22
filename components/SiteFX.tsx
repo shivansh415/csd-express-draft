@@ -66,20 +66,27 @@ export default function SiteFX() {
       if ($('.ht')) {
         gsap.from('.ht-truck', { x: () => -window.innerWidth, duration: 2.2, ease: 'power3.out', delay: 0.1 });
         gsap.from('.ht .ts-road i', { backgroundPositionX: 900, duration: 2.2, ease: 'power3.out', delay: 0.1 });
-        /* the tracker panel (hidden by CSS until now) unrolls across the container once the truck has stopped,
-           then its contents settle in one after another */
+        /* the tracker panel stays hidden (CSS) with a scroll cue on the container; the first bit of scrolling
+           (or keyboard focus reaching it) makes the panel cover the container, then its contents settle in */
         const parts = $$('.ct-form > *, .ct-top, .ct-route, .ct-steps li');
         gsap.set(parts, { autoAlpha: 0, y: 14 });
+        const cue = gsap.fromTo('.ct-cue', { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out', delay: 1.9 });
         const reveal = gsap.timeline({ paused: true })
-          .fromTo('.ct-in', { clipPath: 'inset(0% 100% 0% 0% round 18px)' }, { clipPath: 'inset(0% 0% 0% 0% round 18px)', duration: 1.6, ease: 'power3.inOut' })
-          .to(parts, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.07 }, 0.9)
+          .fromTo('.ct-in', { clipPath: 'inset(0% 100% 0% 0% round 18px)' }, { clipPath: 'inset(0% 0% 0% 0% round 18px)', duration: 1.1, ease: 'power3.inOut' })
+          .to(parts, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.06 }, 0.55)
           .set('.ct-in', { clipPath: 'none' }); // keep an inline value: the CSS default is the hidden state
-        if (matchMedia('(max-width: 990px)').matches) {
-          // the tracker sits under the truck here: play it when it scrolls into view
-          ScrollTrigger.create({ trigger: '.ct', start: 'top 85%', once: true, onEnter: () => reveal.play() });
-        } else {
-          gsap.delayedCall(2.0, () => reveal.play());
-        }
+        let shown = false;
+        const show = () => {
+          if (shown) return;
+          shown = true;
+          cue.kill();
+          gsap.to('.ct-cue', { autoAlpha: 0, y: -12, duration: 0.35, ease: 'power2.in' });
+          reveal.play();
+        };
+        const onScroll = () => { if (window.scrollY > 12) show(); };
+        window.addEventListener('scroll', onScroll, { passive: true, signal });
+        $('.ct')?.addEventListener('focusin', show, { signal });
+        onScroll(); // page restored part-way down
       }
 
       /* process: horizontal scroll with the truck riding the rail; each step switches on as the truck reaches it */
@@ -208,6 +215,7 @@ export default function SiteFX() {
         gsap.set('[data-split],[data-reveal]', { visibility: 'visible' });
         gsap.set('#commitText', { color: '#1C2158' });
         gsap.set('.ct-in', { clipPath: 'none' });
+        gsap.set('.ct-cue', { display: 'none' });
         $$('.pr-step').forEach((el) => el.classList.add('on'));
         $('#pausePlay')?.classList.add('play');
       });
