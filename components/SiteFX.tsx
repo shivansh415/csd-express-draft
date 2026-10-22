@@ -150,10 +150,6 @@ export default function SiteFX() {
         });
       }
 
-      /* relaunch: the pause icon turns into play when the story scrolls in */
-      const pp = $('#pausePlay');
-      if (pp) ScrollTrigger.create({ trigger: pp, start: 'top 80%', once: true, onEnter: () => gsap.delayedCall(0.7, () => pp.classList.add('play')) });
-
       /* headline line reveals */
       $$('[data-split]').forEach((el) => {
         const sp = new SplitText(el, { type: 'lines', mask: 'lines', aria: 'none' });
@@ -246,7 +242,6 @@ export default function SiteFX() {
         gsap.set('.ct-in', { clipPath: 'none' });
         gsap.set('.ct-cue', { display: 'none' });
         $$('.pr-step').forEach((el) => el.classList.add('on'));
-        $('#pausePlay')?.classList.add('play');
       });
     } else if (pre && !document.documentElement.classList.contains('no-intro')) {
       lenis?.stop();

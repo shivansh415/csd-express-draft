@@ -91,13 +91,14 @@ h1,h2,h3,p,figure{margin:0}
 .dx-head{display:grid;gap:1.2rem;margin-bottom:clamp(2.5rem,5vw,4.5rem);max-width:46rem}
 
 /* nav */
-.dx-nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:1rem;height:76px;padding-inline:max(var(--gutter),calc((100vw - var(--max))/2 + var(--gutter)));transition:transform .6s var(--ease)}
+.dx-nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:76px;padding-block:10px;padding-inline:max(var(--gutter),calc((100vw - var(--max))/2 + var(--gutter)));transition:transform .6s var(--ease)}
 .dx-nav::before{content:"";position:absolute;inset:0;z-index:-1;background:color-mix(in srgb,var(--paper) 80%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);opacity:0;transition:opacity .4s}
 .dx-nav.scrolled::before{opacity:1}
 .dx-nav.hide{transform:translateY(-110%)}
 .dx-nav.dark::before{background:rgba(28,33,88,.72);border-bottom-color:rgba(255,255,255,.12)}
 .dx-brand{display:flex;align-items:center;gap:.7rem;font-family:var(--fh);font-weight:700;letter-spacing:-.01em}
-.dx-logo{width:84px;height:auto;display:block}
+.dx-logo{width:132px;height:auto;display:block;transition:width .45s var(--ease)} /* full logo: large at the top of the page, compact once scrolled */
+.dx-nav.scrolled .dx-logo{width:86px}
 .dx-nav nav{display:flex;gap:2rem;font-size:.95rem;color:var(--ink-2)}
 .dx-nav nav a:hover{color:var(--ink)}
 .dx-nav .btn{height:44px}
@@ -267,23 +268,13 @@ h1,h2,h3,p,figure{margin:0}
 .pr-step.last.on .pr-tags span{border-color:rgba(255,255,255,.5);color:#fff}
 .pr-step.last.on p{color:#fff}
 
-/* ---------- relaunch: pause turns into play ---------- */
-.pp-row{display:flex;align-items:center;gap:.9rem}
-.pp{position:relative;flex:none;width:44px;height:44px;border-radius:50%;background:var(--ink);transition:background .6s var(--ease),transform .6s var(--ease)}
-.pp i{position:absolute;inset:14px 15px;background:#fff;transition:clip-path .7s var(--ease)}
-.pp i:first-child{clip-path:polygon(0 0,36% 0,36% 100%,0 100%)}
-.pp i:last-child{clip-path:polygon(64% 0,100% 0,100% 100%,64% 100%)}
-.pp.play{background:var(--green);transform:scale(1.06)}
-.pp.play i{inset:14px 13px 14px 17px}
-.pp.play i:first-child{clip-path:polygon(0 0,50% 25%,50% 75%,0 100%)}
-.pp.play i:last-child{clip-path:polygon(50% 25%,100% 50%,100% 50%,50% 75%)}
-
 /* ---------- small screens ---------- */
 @media (max-width:600px){
   body{font-size:16px}
-  .dx-nav{height:64px}
+  .dx-nav{min-height:64px;padding-block:8px}
   .dx-nav .btn{height:40px;padding-inline:1rem;font-size:.9rem}
-  .dx-logo{width:72px}
+  .dx-logo{width:96px}
+  .dx-nav.scrolled .dx-logo{width:70px}
   .dx-h1{font-size:clamp(2.2rem,11vw,2.8rem)}
   .dx-section{padding-block:4rem}
   .sv-visual{border-radius:22px}
@@ -291,7 +282,7 @@ h1,h2,h3,p,figure{margin:0}
   .ft-mark{flex-direction:column;align-items:flex-start}
   .ft-mark div{text-align:left!important}
 }
-@media (prefers-reduced-motion:reduce){.pp,.pp i,.pr-tags span{transition:none}}
+@media (prefers-reduced-motion:reduce){.pr-tags span{transition:none}}
 @media (max-width:900px){.sv-visual small{display:none}.sv-visual img{bottom:8%}}
 
 
@@ -299,7 +290,7 @@ h1,h2,h3,p,figure{margin:0}
 @media (max-width:600px){.ft-credit{margin-left:0}}
 
 /* ---------- hero: big truck, tracker on the container ---------- */
-.ht{position:relative;background:var(--paper);padding:clamp(104px,14vh,140px) 0 clamp(2.5rem,6vh,4rem);overflow:hidden}
+.ht{position:relative;background:var(--paper);padding:clamp(150px,19vh,180px) 0 clamp(2.5rem,6vh,4rem);overflow:hidden}
 .ht::before{content:"";position:absolute;left:50%;top:22%;width:min(980px,96vw);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(closest-side,var(--dusk),transparent 70%);opacity:.55;pointer-events:none}
 .ht-copy{position:relative;display:grid;gap:1.2rem;justify-items:center;text-align:center;padding-inline:var(--gutter)}
 .ht-copy .dx-h1{font-size:clamp(2.3rem,5.6vw,5.2rem);max-width:13em}
@@ -468,3 +459,8 @@ h1,h2,h3,p,figure{margin:0}
 @keyframes ct-wheel{0%{transform:translateY(0);opacity:1}70%{transform:translateY(12px);opacity:0}100%{transform:translateY(0);opacity:0}}
 @media (max-width:990px){.ct-cue{justify-content:flex-start;padding-top:clamp(28px,6vh,48px)}} /* the hidden card runs below the fold here: keep the cue right under the truck */
 @media (prefers-reduced-motion:reduce){.ct-mouse i{animation:none}}
+
+/* "How we work" label, larger at the client's request */
+.dx-eyebrow.big{font-size:clamp(1.15rem,2.1vw,1.75rem);letter-spacing:.14em;gap:.9rem}
+.dx-eyebrow.big::before{width:13px;height:13px}
+.pr .dx-eyebrow.big{color:#C9CBE0}

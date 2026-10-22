@@ -5,7 +5,7 @@ export default function DxNav({ dark = false, home = '/' }: { dark?: boolean; ho
   return (
     <header id="nav" className={`dx-nav${dark ? ' dark' : ''}`}>
       <Link className="dx-brand" href={home} aria-label="CSD Supply Chain">
-        <BrandLogo variant="mark" className="dx-logo" tone={dark ? 'light' : 'brand'} />
+        <BrandLogo className="dx-logo" tone={dark ? 'light' : 'brand'} />
       </Link>
       <nav aria-label="Sections">
         <a href="#track">Track</a>

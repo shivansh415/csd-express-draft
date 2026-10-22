@@ -16,7 +16,7 @@ export default function Process() {
       <div className="pr-pin" id="procPin">
         <div className="wrap pr-head">
           <div style={{ display: 'grid', gap: '1.2rem' }}>
-            <p className="dx-eyebrow">How we work</p>
+            <p className="dx-eyebrow big">How we work</p>
             <h2 className="dx-h2" data-split>Seven steps, the same order every night.</h2>
           </div>
           <p className="dx-lede" data-reveal>Each step leaves a digital record, so you and our dispatch desk are always looking at the same information.</p>
