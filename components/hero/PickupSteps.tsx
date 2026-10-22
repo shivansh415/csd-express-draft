@@ -207,7 +207,7 @@ export default function PickupSteps({ route, load, whatsapp }: { route: string; 
                 <span>I declare the contents are not prohibited goods and the details above are correct</span>
               </label>
             </div>
-            {foot(<>{route}<br /><b>{data.count} pkg · {kg(charge)}</b></>, 'Book on WhatsApp')}
+            {foot(<>{route}<br /><b>{data.count} pkg · {kg(charge)}</b></>, 'Book now')}
           </>
         )}
       </form>
